@@ -7,8 +7,6 @@ const conect = (uri, options = {}) => {
       const data = await answer.json();
       return data;
     }
-
-    console.log(answer)
     throw new Error(answer);
   })
 }

@@ -36,6 +36,10 @@ const stationList = [
 ];
 
 describe("Card Component", () => {
+	it("Rendered the loader", async () => {
+		render(<Card title={"Stations"} />)
+		expect(screen.getByTestId("loader")).toBeInTheDocument()
+	})
 
 	it("Show list of stations from api", async () => {
 		mockedApi.mockResolvedValue(stationList);
@@ -45,20 +49,21 @@ describe("Card Component", () => {
 	});
 
 	it("Toggle and show the details of a station", async () => {
-
 		mockedApi.mockResolvedValue(stationList);
 		render(<Card title={"Stations"} />);
 
 		expect(await screen.findByText(stationList[0].name)).toBeInTheDocument();
-		const button = screen.getByTestId("0")
-		fireEvent.click(button)
+		const button = screen.getByTestId("0");
+		fireEvent.click(button);
 
 		//Check if the selected station menu is active
-		const selectedStation = screen.getByTestId(stationList[0].name + "is-selected")
-		expect(selectedStation.className).toBe("card__list-selected active")
+		const selectedStation = screen.getByTestId(
+			stationList[0].name + "is-selected"
+		);
+		expect(selectedStation.className).toBe("card__list-selected active");
 
 		//Check if Currently Playing is showing the right station
-		const currentlyPlaying = screen.getByTestId("currently-playing")
-		expect(currentlyPlaying.innerHTML).toBe(stationList[0].name)
+		const currentlyPlaying = screen.getByTestId("currently-playing");
+		expect(currentlyPlaying.innerHTML).toBe(stationList[0].name);
 	});
 });
