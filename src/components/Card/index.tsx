@@ -7,7 +7,7 @@ import switch_button from "../../images/switch.png";
 import minus from "../../images/minus.png";
 import plus from "../../images/plus.png";
 
-import axios from "axios";
+import api from "../../api";
 
 export interface Station {
 	name: string;
@@ -20,57 +20,76 @@ interface CardProps {
 }
 
 const Card = ({ title }: CardProps) => {
-	const [stations, setStations] = useState<Station[]>();
 	const [selected, setSelected] = useState<Station>();
+	const [stations, setStations] = useState<Station[]>();
 
 	const fetch = async () => {
-		const { data } = await axios.get("http://localhost:3333/station");
-		setStations(data);
+		const res = await api.stationList();
+		setStations(res);
 	};
 	useEffect(() => {
 		fetch();
 	}, []);
-
 	const getSubMenu = (station: Station) => {
-		
 		return (
 			<div
+				data-testid={station.name + "is-selected"}
 				className={
 					selected?.frequency === station.frequency
 						? "card__list-selected active"
 						: "card__list-selected"
 				}
 			>
-				<img alt={"Turn down"} src={minus} />
-				<img
-					alt={station.name}
-					className={"card__list-selected-image"}
-					src={station.image_url}
-				/>
-				<img alt={"Turn up"} src={plus} />
+				<button className={"card__icons-button"}>
+					<img className={"card__icons"} alt={"Turn down volume"} src={minus} />
+				</button>
+				<div className={"card__list-selected-image"}>
+					<img
+						data-testid={"selected-station-image" + station.name}
+						alt={station.name}
+						src={station.image_url}
+					/>
+				</div>
+				<button className={"card__icons-button"}>
+					<img className={"card__icons"} alt={"Turn up volume"} src={plus} />
+				</button>
 			</div>
 		);
 	};
 
 	const onClick = (station: Station) => {
-		if (!selected) setSelected(station)
-		if (selected?.frequency === station.frequency) setSelected(undefined)
-		else setSelected(station)
-	}
+		if (!selected) setSelected(station);
+		if (selected?.frequency === station.frequency) setSelected(undefined);
+		else setSelected(station);
+	};
 
 	return (
 		<section className="card">
 			<div className="card__header">
-				<img src={back_arrow} alt={"Return button"} />
+				<button className={"card__icons-button"}>
+					<img
+						className={"card__icons"}
+						src={back_arrow}
+						alt={"Return button"}
+					/>
+				</button>
 				<h1>{title}</h1>
-				<img src={switch_button} alt={"Return button"} />
+				<button className={"card__icons-button"}>
+					<img
+						className={"card__icons"}
+						src={switch_button}
+						alt={"Power Off button"}
+					/>
+				</button>
 			</div>
-			<ul className="card__list">
-				{stations?.map((station) => (
+			<ul className="card__list" id="station-list" data-testid="station-list">
+				{stations?.map((station, idx) => (
 					<li
+						key={idx}
 						id={station.frequency}
 						className={"card__list-item"}
 						onClick={() => onClick(station)}
+						data-testid={idx}
 					>
 						{getSubMenu(station)}
 						<div className="card__list-item-textWrapper">
@@ -82,7 +101,7 @@ const Card = ({ title }: CardProps) => {
 			</ul>
 			<div className="card__footer">
 				<p>{selected ? "Currently Playing" : ""}</p>
-				<span>{selected?.name}</span>
+				<span data-testid="currently-playing">{selected?.name}</span>
 			</div>
 		</section>
 	);
