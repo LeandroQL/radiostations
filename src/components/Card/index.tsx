@@ -28,8 +28,8 @@ const Card = ({ title }: CardProps) => {
 
 	const fetch = async () => {
 		//Request from api
-		const res = await api.stationList();
-		// const res = stationList
+		// const res = await api.stationList();
+		const res = stationList
 		setStations(res);
 	};
 	useEffect(() => {

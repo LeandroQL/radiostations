@@ -36,11 +36,6 @@ const stationList = [
 ];
 
 describe("Card Component", () => {
-	it("Rendered the loader", async () => {
-		render(<Card title={"Stations"} />)
-		expect(screen.getByTestId("loader")).toBeInTheDocument()
-	})
-
 	it("Show list of stations from api", async () => {
 		mockedApi.mockResolvedValue(stationList);
 		render(<Card title={"Stations"} />);
